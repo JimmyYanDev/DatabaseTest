@@ -71,7 +71,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 values.clear();
                 // 开始组装第二条数据
                 values.put("name", "The Lost Symbol");
-                values.put("author", "Dan Brown");
+                values.put("author", "Steve Bob");
                 values.put("pages", 510);
                 values.put("price", 19.95);
                 db.insert("Book", null, values); // 插入第二条数据
@@ -86,8 +86,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.deleteData:
                 db = mHelper.getWritableDatabase();
-                db.delete("Book", "pages > ?", new String[]{"500"});
-                Toast.makeText(this, "已成功删除页数大于500的书", Toast.LENGTH_SHORT).show();
+                db.beginTransaction();
+                try {
+                    db.delete("Book", null, null);
+                    ContentValues values3 = new ContentValues();
+                    values3.put("name", "Game of Thrones");
+                    values3.put("author", "George Martin");
+                    values3.put("pages", 720);
+                    values3.put("price", 20.85);
+                    db.insert("Book", null, values3);
+                    Toast.makeText(this, "已成功删除所有书，并重新添加了一本新书《Game of Thrones》", Toast.LENGTH_SHORT).show();
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+
                 break;
             case R.id.queryData:
                 db = mHelper.getWritableDatabase();
